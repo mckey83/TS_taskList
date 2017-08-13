@@ -1,0 +1,10 @@
+<header>
+	<img src="{{ path }}" />
+	<h1>{{ title }}</h1>
+</header>
+<main>
+
+<todo-form (add)="create($event)"></todo-form>
+<todo-list [todos] ="todos"></todo-list>
+
+</main>
