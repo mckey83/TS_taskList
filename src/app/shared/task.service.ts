@@ -8,8 +8,13 @@ import {Injectable} from "@angular/core";
 export class TaskService{
   tasks:Task[] = [];
   private apiUrl = 'api/tasks';
+  private headers;
+  private options;
 
-  constructor(private http: Http){}
+  constructor(private http: Http){
+    this.headers = new Headers({'Content-Type:':'application/json'});
+    this.options = new RequestOptions(this.headers);
+  }
 
   getTasks(): Promise<Task[]> {
     return this.http.get(this.apiUrl)
@@ -20,10 +25,8 @@ export class TaskService{
   }
 
   create(title:string){
-    let headers = new Headers({'Content-Type:':'application/json'});
-    let options = new RequestOptions({headers});
     let taskNew = new Task(title);
-    this.http.post(this.apiUrl, taskNew, options)
+    this.http.post(this.apiUrl, taskNew, this.options)
       .toPromise()
       .then(res => res.json().data)
       .then(taskNew => this.tasks.push(taskNew))
@@ -31,10 +34,8 @@ export class TaskService{
   }
 
   delete(task:Task) {
-    let headers = new Headers({'Content-Type:':'application/json'});
-    let options = new RequestOptions({headers});
     let url = this.apiUrl+'/'+task.id;
-    this.http.delete(url, options)
+    this.http.delete(url, this.options)
       .toPromise()
       .then(res => {
         let index = this.tasks.indexOf(task);
@@ -46,10 +47,8 @@ export class TaskService{
   }
 
   toggle(task:Task){
-    let headers = new Headers({'Content-Type:':'application/json'});
-    let options = new RequestOptions({headers});
     let url = this.apiUrl+'/'+task.id;
-    this.http.put(url, task, options)
+    this.http.put(url, task, this.options)
       .toPromise()
       .then(res => {
         task.completed = !task.completed;
